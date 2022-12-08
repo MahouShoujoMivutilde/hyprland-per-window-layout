@@ -57,6 +57,33 @@ device:Logitech USB Keyboard {
 }
 ```
 
+Then there are 2 options:
+
+1\. You could try running the script with debug output on, see if it guesses your setup correctly
+
+```
+❯ HPWX_DEBUG=true hyprland-per-window-xkblayout
+
+no config file, trying to guess options...
+ok
+found: us (0) is English (US)
+ok
+found: ru (1) is Russian
+ok
+...
+
+options set:
+
+DEBUG = true, keyboard = logitech-usb-keyboard
+declare -A layouts_short=([Russian]="ru" ["English (US)"]="us" )
+
+(this is an index of a given layout in `kb_layout`)
+declare -A kb_layout=([us]="0" [ru]="1" )
+
+```
+
+2\. If it isn't correct - using config file to set it up manually.
+
 Then our config, stored in `~/.config/hypr/xkb_layout.conf`, will be
 
 ```sh
@@ -85,7 +112,3 @@ You can also add it to startup
 
 exec-once = hyprland-per-window-xkblayout
 ```
-
-## TODO
-
-* Zero config: automatically find device where `kb_layout` is configured etc

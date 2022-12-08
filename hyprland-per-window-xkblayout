@@ -11,22 +11,6 @@
 
 set -e
 
-# OPTIONS (fill with your values!)
-DEBUG=true
-
-# keyboard device from hyprland.conf where you define `kb_layout`
-# in lowercase, spaces as `-`
-keyboard="logitech-usb-keyboard"
-
-# map long layout names to short ones, as displayed in
-# `hyprctl devices -j | gojq -r '.keyboards | .[] | .active_keymap' | sort -u`
-# when selecting different layouts
-declare -A layouts_short=(["English (US)"]="us" ["Russian"]="ru")
-
-#
-# -------------------------------------------------------
-#
-
 print_debug() {
     if $DEBUG; then
         if command -v lolcat >/dev/null; then
@@ -36,6 +20,21 @@ print_debug() {
         fi
     fi
 }
+
+# Default OPTIONS (fill if you don't want to use the config file)
+DEBUG=false
+keyboard="your-keyboard-name-with-no-spaces-all-lowercase"
+declare -A layouts_short=(["English (US)"]="us" ["Russian"]="ru")
+
+#
+# -------------------------------------------------------
+#
+
+config="$HOME/.config/hypr/xkb_layout.conf"
+if [[ -f "$config" ]]; then
+    print_debug "loaded config from ${config}\n"
+    source "$config"
+fi
 
 get_active_layout() {
     local layout_fullname="$(

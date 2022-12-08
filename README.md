@@ -44,11 +44,11 @@ Tested and works on Hyprland v0.19.0beta.
 
 ## Setup
 
-Open the script, edit values under `OPTIONS` line.
+Download the script, save it somewhere in your `$PATH`, make sure it is executable.
 
 The script assumes that you setup layout in dedicated `device:...` section in `hyprland.conf`, **not** inside general `input` block.
 
-e.g.
+Let's say we have this in `hyprland.conf`:
 
 ```
 device:Logitech USB Keyboard {
@@ -57,9 +57,15 @@ device:Logitech USB Keyboard {
 }
 ```
 
-So under `OPTIONS` it will look like:
+Then our config, stored in `~/.config/hypr/xkb_layout.conf`, will be
 
 ```sh
+# config for hyprland-per-window-layout script
+# use it to overwrite default values
+
+# print events and actions taken
+DEBUG=true
+
 # keyboard device from hyprland.conf where you define `kb_layout`
 # in lowercase, spaces as `-`
 keyboard="logitech-usb-keyboard"
@@ -72,14 +78,12 @@ declare -A layouts_short=(["English (US)"]="us" ["Russian"]="ru")
 
 Once you set this up, the script is ready for use.
 
-Make sure it is executable and run it.
-
 You can also add it to startup
 
 ```
 # hyprland.conf
 
-exec-once = path/to/script/hyprland-per-window-xkblayout
+exec-once = hyprland-per-window-xkblayout
 ```
 
 ## TODO

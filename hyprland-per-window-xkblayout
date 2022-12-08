@@ -36,24 +36,17 @@ if [[ -f "$config" ]]; then
     source "$config"
 fi
 
-get_active_layout() {
-    local layout_fullname="$(
-        hyprctl devices -j |
-            gojq -r "
-            .keyboards
-            | .[]
-            | select(.name == \"$keyboard\")
-            | .active_keymap"
-    )"
-
-    echo "${layouts_short[$layout_fullname]}"
-}
+kbd="$(hyprctl devices -j | gojq -r " .keyboards | .[] | select(.name == \"$keyboard\")")"
+if [[ "$kbd" == "" ]]; then
+    echo "No such device - $keyboard"
+    exit 1
+fi
 
 # addr to layout map
 declare -A windows
 
 # predefine current layout for all windows
-layout="$(get_active_layout)"
+layout="${layouts_short["$(echo "$kbd" | gojq -r '.active_keymap')"]}"
 
 for addr in $(hyprctl clients -j | gojq -r '.[] | .address'); do
     windows[$addr]="$layout"

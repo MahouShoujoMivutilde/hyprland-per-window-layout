@@ -39,6 +39,8 @@ windows = {
 * socat (for listening for Hyprland socket2 events).
 * [gojq](https://github.com/itchyny/gojq) (for working with `hyprctl`'s json. `jq` could work, but it is much slower, so quit using it already).
 
+Tested and works on Hyprland v0.19.0beta.
+
 ## Setup
 
 Open the script, edit values under `OPTIONS` line.

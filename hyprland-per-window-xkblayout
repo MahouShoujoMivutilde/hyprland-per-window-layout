@@ -30,9 +30,9 @@ declare -A layouts_short=(["English (US)"]="us" ["Russian"]="ru")
 print_debug() {
     if $DEBUG; then
         if command -v lolcat >/dev/null; then
-            echo "$@" | lolcat
+            echo -e "$@" | lolcat
         else
-            echo "LOG:" "$@"
+            echo -e "LOG:" "$@"
         fi
     fi
 }
@@ -164,9 +164,15 @@ handle() {
     esac
 }
 
-hl_instance="/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE"
+print_debug "\noptions set:\n"
 
-print_debug "...waiting for new events..."
+print_debug "DEBUG = $DEBUG, keyboard = $keyboard"
+print_debug "layouts_short = $(declare -p layouts_short)"
+print_debug "(inferred) kb_layout = $(declare -p kb_layout)"
+
+print_debug "\n...waiting for new events...\n"
+
+hl_instance="/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE"
 
 socat - \
     UNIX-CONNECT:"$hl_instance/.socket2.sock" |

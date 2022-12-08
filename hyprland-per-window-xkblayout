@@ -21,7 +21,7 @@ print_debug() {
     fi
 }
 
-# OPTIONS (...are guessed automatically if there are no config)
+# OPTIONS (...are guessed automatically if there is no config)
 DEBUG="${HPWX_DEBUG:-false}"
 keyboard="your-keyboard-name-with-no-spaces-all-lowercase"
 declare -A layouts_short

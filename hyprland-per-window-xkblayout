@@ -35,7 +35,7 @@ if [[ -f "$config" ]]; then
     print_debug "loaded config from ${config}\n"
     source "$config"
 
-    kbd="$(hyprctl devices -j | gojq -r " .keyboards | .[] | select(.name == \"$keyboard\")")"
+    kbd="$(hyprctl devices -j | gojq -r ".keyboards | .[] | select(.name == \"$keyboard\")")"
     if [[ "$kbd" == "" ]]; then
         echo "No such device - $keyboard"
         exit 1
@@ -48,7 +48,7 @@ else
     # multiple keyboards with different layouts - you're
     # obviously know what you're doing and don't need this script.
     keyboard="$(hyprctl devices -j |
-        gojq -r " .keyboards | .[] | select(.layout | contains(\",\")) | .name" |
+        gojq -r ".keyboards | .[] | select(.layout | contains(\",\")) | .name" |
         head -n 1)"
     if [[ "$keyboard" == "" ]]; then
         echo "No keyboard with multiple layouts defined found"
@@ -60,12 +60,12 @@ fi
 # kb_layout, but as an array that we can index
 read -r -a kb_layout_arr < <(
     hyprctl devices -j |
-        gojq -r " .keyboards | .[] | select(.name == \"$keyboard\") | .layout" |
+        gojq -r ".keyboards | .[] | select(.name == \"$keyboard\") | .layout" |
         tr ',' ' '
 )
 
 layout_long="$(hyprctl devices -j |
-    gojq -r " .keyboards | .[] | select(.name == \"$keyboard\") | .active_keymap")"
+    gojq -r ".keyboards | .[] | select(.name == \"$keyboard\") | .active_keymap")"
 
 # short layout names to index
 declare -A kb_layout
@@ -78,7 +78,7 @@ for index in "${!kb_layout_arr[@]}"; do
         # find long names
         hyprctl switchxkblayout "$keyboard" "$index"
         long_name="$(hyprctl devices -j |
-            gojq -r " .keyboards | .[] | select(.name == \"$keyboard\") | .active_keymap")"
+            gojq -r ".keyboards | .[] | select(.name == \"$keyboard\") | .active_keymap")"
 
         layouts_short["$long_name"]="$short_name"
 

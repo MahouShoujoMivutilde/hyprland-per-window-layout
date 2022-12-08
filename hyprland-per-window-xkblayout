@@ -109,8 +109,7 @@ handle() {
             return
         fi
 
-        local short="${layouts_short["$layout_fullname"]}"
-        layout="$short"
+        layout="${layouts_short["$layout_fullname"]}"
 
         if [[ "$current" == null ]]; then
             return
@@ -120,9 +119,9 @@ handle() {
             return
         fi
 
-        windows["$current"]="$short"
+        windows["$current"]="$layout"
 
-        print_debug "define layout for window $current as $short"
+        print_debug "define layout for window $current as $layout"
         ;;
 
     createworkspace)
@@ -161,7 +160,6 @@ handle() {
     closewindow)
         local close_addr="0x${event_data}"
         unset windows["$close_addr"]
-
         print_debug "clear window $close_addr from map"
         ;;
     esac

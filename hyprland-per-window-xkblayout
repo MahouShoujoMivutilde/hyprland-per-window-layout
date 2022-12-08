@@ -122,8 +122,11 @@ handle() {
 
     case "$event" in
     activelayout)
+        local kbd_device="${event_data%,*}"
         local layout_fullname="${event_data#*,}"
-        if ! [[ -v layouts_short["$layout_fullname"] ]]; then
+
+        if ! [[ -v layouts_short["$layout_fullname"] ]] ||
+            [[ "$kbd_device" != "$keyboard" ]]; then
             # layout can also be `error` or `none`
             # happens after using `wtype`
             return

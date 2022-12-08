@@ -81,3 +81,7 @@ You can also add it to startup
 
 exec-once = path/to/script/hyprland-per-window-xkblayout
 ```
+
+## TODO
+
+* Zero config: automatically find device where `kb_layout` is configured etc

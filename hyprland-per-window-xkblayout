@@ -50,6 +50,10 @@ else
     keyboard="$(hyprctl devices -j |
         gojq -r " .keyboards | .[] | select(.layout | contains(\",\")) | .name" |
         head -n 1)"
+    if [[ "$keyboard" == "" ]]; then
+        echo "No keyboard with multiple layouts defined found"
+        exit 1
+    fi
 fi
 
 # FIXME eww this looks horrible {{{

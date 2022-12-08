@@ -34,6 +34,12 @@ config="$HOME/.config/hypr/xkb_layout.conf"
 if [[ -f "$config" ]]; then
     print_debug "loaded config from ${config}\n"
     source "$config"
+
+    kbd="$(hyprctl devices -j | gojq -r " .keyboards | .[] | select(.name == \"$keyboard\")")"
+    if [[ "$kbd" == "" ]]; then
+        echo "No such device - $keyboard"
+        exit 1
+    fi
 else
     print_debug "no config file, trying to guess options..."
 
@@ -44,12 +50,6 @@ else
     keyboard="$(hyprctl devices -j |
         gojq -r " .keyboards | .[] | select(.layout | contains(\",\")) | .name" |
         head -n 1)"
-fi
-
-kbd="$(hyprctl devices -j | gojq -r " .keyboards | .[] | select(.name == \"$keyboard\")")"
-if [[ "$kbd" == "" ]]; then
-    echo "No such device - $keyboard"
-    exit 1
 fi
 
 # FIXME eww this looks horrible {{{

@@ -44,7 +44,7 @@ Tested and works on Hyprland v0.19.0beta.
 
 ## Setup
 
-Download the script, save it somewhere in your `$PATH`, make sure it is executable.
+Download [the script](./hyprland-per-window-xkblayout), save it somewhere in your `$PATH`, make sure it is executable.
 
 The script assumes that you setup layout in dedicated `device:...` section in `hyprland.conf`, **not** inside general `input` block.
 

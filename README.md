@@ -57,7 +57,7 @@ device:Logitech USB Keyboard {
 }
 ```
 
-Then there are 2 options:
+Then there are 2 options - (1) autodetection and (2) manual configuration.
 
 1\. You could try running the script with debug output on, see if it guesses your setup correctly
 
@@ -82,7 +82,9 @@ declare -A kb_layout=([us]="0" [ru]="1" )
 
 ```
 
-2\. If it isn't correct - using config file to set it up manually.
+If it is correct - good, you don't need to write the config file.
+
+2\. If it isn't - you can use the config file to set it up manually.
 
 Then our config, stored in `~/.config/hypr/xkb_layout.conf`, will be
 

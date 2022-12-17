@@ -63,23 +63,25 @@ Then there are 2 options - (1) autodetection and (2) manual configuration.
 
 ```
 ❯ HPWX_DEBUG=true hyprland-per-window-xkblayout
-
 no config file, trying to guess options...
 ok
-found: us (0) is English (US)
+found layout: 'us' (0) is 'English (US)'
 ok
-found: ru (1) is Russian
+found layout: 'ru' (1) is 'Russian'
 ok
-...
+define window 0x60c5bb20 layout as 'us'
+define window 0x60d00580 layout as 'us'
+define window 0x60cdc5c0 layout as 'us'
 
-options set:
+Options set:
 
-DEBUG = true, keyboard = logitech-usb-keyboard
-declare -A layouts_short=([Russian]="ru" ["English (US)"]="us" )
+DEBUG = true, keyboard = 'logitech-usb-keyboard'
+Long layout names to short names:
+    declare -A layouts_short=([Russian]="ru" ["English (US)"]="us" )
+Index of a given layout in Hyprland's 'kb_layout':
+    declare -A kb_layout=([us]="0" [ru]="1" )
 
-(this is an index of a given layout in `kb_layout`)
-declare -A kb_layout=([us]="0" [ru]="1" )
-
+...waiting for new events...
 ```
 
 If it is correct - good, you don't need to write the config file.

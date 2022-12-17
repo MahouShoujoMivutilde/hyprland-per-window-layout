@@ -21,6 +21,11 @@ print_debug() {
     fi
 }
 
+echons() {
+    echo "$1"
+    notify-send "Hyprland per window xkblayout:" "$1"
+}
+
 # OPTIONS (...are guessed automatically if there is no config)
 DEBUG="${HPWX_DEBUG:-false}"
 keyboard="your-keyboard-name-with-no-spaces-all-lowercase"
@@ -37,7 +42,7 @@ if [[ -f "$config" ]]; then
 
     kbd="$(hyprctl devices -j | gojq -r ".keyboards | .[] | select(.name == \"$keyboard\")")"
     if [[ "$kbd" == "" ]]; then
-        echo "No such device - $keyboard"
+        echons "No such device - '$keyboard'"
         exit 1
     fi
 else
@@ -51,7 +56,7 @@ else
         gojq -r ".keyboards | .[] | select(.layout | contains(\",\")) | .name" |
         head -n 1)"
     if [[ "$keyboard" == "" ]]; then
-        echo "No keyboard with multiple layouts defined found"
+        echons "No keyboard with multiple layouts defined found"
         exit 1
     fi
 fi

@@ -16,7 +16,7 @@ windows = {
 }
 ```
 
-When new windows is opened the current layout is used.
+When new windows is opened the current layout is used (by default) or the first in `kb_layout` (when `HPWX_PREFER_FIRST=true`).
 
 When existing window is selected - layout from `windows` is used.
 
@@ -40,7 +40,7 @@ windows = {
 * [gojq](https://github.com/itchyny/gojq) (for working with `hyprctl`'s json. `jq` could work, but it is much slower, so quit using it already).
 * [lolcat](https://github.com/jaseg/lolcat) (optional, for logs)
 
-Tested and works on Hyprland v0.19.0beta.
+Tested and works since Hyprland v0.19.0beta.
 
 ## Setup
 
@@ -51,7 +51,7 @@ The script assumes that you setup layout in dedicated `device:...` section in `h
 Let's say we have this in `hyprland.conf`:
 
 ```
-device:Logitech USB Keyboard {
+device:logitech-usb-keyboard {
     kb_layout = us,ru
     kb_options = caps:escape,grp:toggle
 }
@@ -69,13 +69,15 @@ found layout: 'us' (0) is 'English (US)'
 ok
 found layout: 'ru' (1) is 'Russian'
 ok
-define window 0x60c5bb20 layout as 'us'
-define window 0x60d00580 layout as 'us'
-define window 0x60cdc5c0 layout as 'us'
+define window 0x5614683c7ab0 layout as 'us'
+define window 0x5614683a8940 layout as 'us'
+define window 0x561469fcf2f0 layout as 'us'
+define window 0x561469fc7dd0 layout as 'us'
+define window 0x561469fd9440 layout as 'us'
 
 Options set:
 
-DEBUG = true, keyboard = 'logitech-usb-keyboard'
+DEBUG = true, PREFER_FIRST = false, keyboard = 'logitech-usb-keyboard'
 Long layout names to short names:
     declare -A layouts_short=([Russian]="ru" ["English (US)"]="us" )
 Index of a given layout in Hyprland's 'kb_layout':
@@ -85,6 +87,15 @@ Index of a given layout in Hyprland's 'kb_layout':
 ```
 
 If it is correct - good, you don't need to write the config file.
+
+If you prefer windows to open with default layout (first in hyprland config) **instead of
+inheriting the current** - set `HPWX_PREFER_FIRST=true` either as environment variable
+(if you don't need to configure anything else) or in config (when you want to
+configure _everything_ yourself).
+
+```sh
+❯ HPWX_PREFER_FIRST=true hyprland-per-window-xkblayout
+```
 
 2\. If it isn't - you can use the config file to set it up manually.
 

@@ -202,7 +202,14 @@ print_debug "    $(declare -p kb_layout)"
 
 print_debug "\n...waiting for new events...\n"
 
-hl_instance="/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE"
+runtime="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+if [[ -d "$runtime/hypr" ]]; then
+    hl_instance="$runtime/hypr/$HYPRLAND_INSTANCE_SIGNATURE"
+else
+    # pre https://github.com/hyprwm/Hyprland/pull/5788
+    hl_instance="/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE"
+fi
+
 
 socat - \
     UNIX-CONNECT:"$hl_instance/.socket2.sock" |

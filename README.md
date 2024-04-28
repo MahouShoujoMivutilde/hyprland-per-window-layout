@@ -16,11 +16,11 @@ windows = {
 }
 ```
 
-When new windows is opened the current layout is used (by default) or the first in `kb_layout` (when `HPWX_PREFER_FIRST=true`).
+When new windows are opened the current layout is used (by default) or the first defined in `kb_layout` (when `HPWX_PREFER_FIRST=true`).
 
 When existing window is selected - layout from `windows` is used.
 
-When you change layout when one of the windows is in focus - its layout gets redefined:
+When you change layout with one of the windows in focus - its layout is redefined:
 
 
 ```python
@@ -46,12 +46,13 @@ Tested and works since Hyprland v0.19.0beta.
 
 Download [the script](./hyprland-per-window-xkblayout), save it somewhere in your `$PATH`, make sure it is executable.
 
-The script assumes that you setup layout in dedicated `device:...` section in `hyprland.conf`, **not** inside general `input` block.
+The script assumes that you setup layout in dedicated `device` section in `hyprland.conf`, **not** inside general `input` block.
 
 Let's say we have this in `hyprland.conf`:
 
 ```
-device:logitech-usb-keyboard {
+device {
+    name = logitech-usb-keyboard
     kb_layout = us,ru
     kb_options = caps:escape,grp:toggle
 }

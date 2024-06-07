@@ -126,7 +126,10 @@ handle() {
         local current="$(hyprctl activewindow -j | gojq -r '.address')"
 
         local kbd_device="${event_data%,*}"
-        local layout_fullname="${event_data#*,}"
+        # atm accounts for keyboards with commas
+        # TODO: support long layout names with commas too
+        #       e.g. `Czech (QWERTY, Macintosh)`
+        local layout_fullname="${event_data##*,}"
 
         if ! [[ -v layouts_short["$layout_fullname"] ]] ||
             [[ "$kbd_device" != "$keyboard" ]]; then

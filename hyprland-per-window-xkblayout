@@ -4,21 +4,56 @@
 #
 # How it works:
 #
-# At script's launch every window (if any) gets its defined layout as currently selected.
+# At script's launch every window (if any) gets its layout defined as currently selected.
 #
 # When new windows is opened the current layout is used (configurable).
 # When existing window is selected - its defined layout is used.
 
 set -e
 
+# shell colors {{{
+RESTORE='\033[0m'
+
+RED='\033[00;31m'
+GREEN='\033[00;32m'
+YELLOW='\033[00;33m'
+BLUE='\033[00;34m'
+PURPLE='\033[00;35m'
+CYAN='\033[00;36m'
+LIGHTGRAY='\033[00;37m'
+
+LRED='\033[01;31m'
+LGREEN='\033[01;32m'
+LYELLOW='\033[01;33m'
+LBLUE='\033[01;34m'
+LPURPLE='\033[01;35m'
+LCYAN='\033[01;36m'
+WHITE='\033[01;37m'
+
+colorme() {
+    while read -r line; do
+        echo -e "${1}${line}${RESTORE}"
+    done
+}
+# }}}
+
 print_debug() {
     if $DEBUG; then
-        if command -v lolcat >/dev/null; then
-            echo -e "$@" | lolcat
-        else
-            echo -e "LOG:" "$@"
-        fi
+        echo -e "LOG:" "$@"
     fi
+}
+
+dump_windows() {
+    echo "DUMP:" | colorme $GREEN
+    hyprctl clients -j | gojq -r '.[] | "\(.address)    \(.workspace.name)    \(.title)"' |
+        while read -r win; do
+            local addr="${win%% *}"
+            if [[ -v windows["$addr"] ]]; then
+                echo "   ${win/${addr}/${addr}-${windows["$addr"]}}" | colorme $GREEN
+            else
+                echo "   ${win} - NO LAYOUT??" | colorme $LGREEN
+            fi
+        done
 }
 
 echons() {
@@ -45,7 +80,7 @@ if [[ -f "$config" ]]; then
 
     kbd="$(hyprctl devices -j | gojq -r ".keyboards | .[] | select(.name == \"$keyboard\")")"
     if [[ "$kbd" == "" ]]; then
-        echons "No such device - '$keyboard'"
+        echons "No such device - '$keyboard'" | colorme $RED
         exit 1
     fi
 else
@@ -59,12 +94,12 @@ else
         gojq -r ".keyboards | .[] | select(.layout | contains(\",\")) | .name" |
         head -n 1)"
     if [[ "$keyboard" == "" ]]; then
-        echons "No keyboard with multiple layouts defined found"
+        echons "No keyboard with multiple layouts defined found" | colorme $RED
         exit 1
     fi
 fi
 
-# FIXME eww this looks horrible {{{
+# FIXME: eww this looks horrible {{{
 # kb_layout, but as an array that we can index
 read -r -a kb_layout_arr < <(
     hyprctl devices -j |
@@ -150,7 +185,7 @@ handle() {
 
         windows["$current"]="$layout"
 
-        print_debug "define layout for window $current as '$layout'"
+        print_debug "define layout for window $current as '$layout'" | colorme $LYELLOW
         ;;
 
     openwindow)
@@ -160,7 +195,7 @@ handle() {
         else
             windows["$open_addr"]="$layout"
         fi
-        print_debug "open window $open_addr, define layout as '$layout'"
+        print_debug "open window $open_addr, define layout as '$layout'" | colorme $YELLOW
         ;;
 
     activewindow)
@@ -171,8 +206,7 @@ handle() {
             local short="${windows[$current]}"
             local index="${kb_layout[$short]}"
 
-            print_debug "window $current with defined layout '$short' (current is '$layout')"
-
+            print_debug "window $current with defined layout '$short' (current is '$layout')" | colorme $CYAN
             if [[ "$layout" == "$short" ]]; then
                 return
             fi
@@ -181,18 +215,28 @@ handle() {
             hyprctl switchxkblayout "$keyboard" "$index"
 
             layout="$short"
-            print_debug "RESTORED layout '$short' ($index)"
+            print_debug "  ⤷ RESTORED layout '$short' ($index)" | colorme $LCYAN
         else
-            print_debug "window $current without saved layout? WTF"
+            # NOTE: sometimes openwindow is emitted after activewindow / activewindowv2
+            # e.g. pinentry-qt:
+            #   windowtitle>>55f3a1f70910
+            #   activewindow>>org.gnupg.pinentry-qt,[125350]....
+            #   activewindowv2>>55f3a1f70910
+            #   openwindow>>55f3a1f70910,3,org.gnupg.pinentry-qt
+            #   ....
+            print_debug "window $current without saved layout. Ignoring. (Possible only when activewindow is emitted before openwindow)" | colorme $LRED
         fi
         ;;
 
     closewindow)
         local close_addr="0x${event_data}"
         unset windows["$close_addr"]
-        print_debug "clear window $close_addr from map"
+        print_debug "clear window $close_addr from map" | colorme $PURPLE
         ;;
     esac
+    if $DEBUG; then
+        dump_windows
+    fi
 }
 
 print_debug "\nOptions set:\n"

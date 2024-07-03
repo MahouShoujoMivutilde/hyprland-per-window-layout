@@ -38,7 +38,6 @@ windows = {
 * bash 4.0+ (for associative arrays).
 * socat (for listening for Hyprland socket2 events).
 * [gojq](https://github.com/itchyny/gojq) (for working with `hyprctl`'s json. `jq` could work, but it is much slower, so quit using it already).
-* [lolcat](https://github.com/jaseg/lolcat) (optional, for logs)
 
 Tested and works since Hyprland v0.19.0beta.
 

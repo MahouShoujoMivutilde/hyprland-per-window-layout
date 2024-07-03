@@ -43,9 +43,9 @@ print_debug() {
     fi
 }
 
+dump_windows_old_hash=''
 dump_windows() {
-    echo "DUMP:" | colorme $GREEN
-    hyprctl clients -j | gojq -r '.[] | "\(.address)    \(.workspace.name)    \(.title)"' |
+    local dump="$(hyprctl clients -j | gojq -r '.[] | "\(.address)    \(.workspace.name)    \(.title)"' |
         while read -r win; do
             local addr="${win%% *}"
             if [[ -v windows["$addr"] ]]; then
@@ -53,7 +53,13 @@ dump_windows() {
             else
                 echo "   ${win} - NO LAYOUT??" | colorme $LGREEN
             fi
-        done
+        done)"
+    current_hash="$(echo "$dump" | md5sum)"
+    if [[ "$dump_windows_old_hash" != "$current_hash" ]]; then
+        dump_windows_old_hash="$current_hash"
+        echo "DUMP:" | colorme $GREEN
+        echo "$dump"
+    fi
 }
 
 echons() {

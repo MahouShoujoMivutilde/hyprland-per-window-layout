@@ -170,6 +170,8 @@ handle() {
         # atm accounts for keyboards with commas
         # TODO: support long layout names with commas too
         #       e.g. `Czech (QWERTY, Macintosh)`
+        #       ...which is problematic because we can have `activelayout>>some,keyboard,Some,(Layout,Name)`
+        # tracking: https://github.com/hyprwm/Hyprland/issues/6298#issuecomment-2143494999
         local layout_fullname="${event_data##*,}"
 
         if ! [[ -v layouts_short["$layout_fullname"] ]] ||

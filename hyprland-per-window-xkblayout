@@ -37,6 +37,7 @@ colorme() {
 }
 # }}}
 
+# output/debug utils {{{
 print_debug() {
     if $DEBUG; then
         echo -e "LOG:" "$@"
@@ -64,8 +65,9 @@ dump_windows() {
 
 echons() {
     echo "$1"
-    notify-send "Hyprland per window xkblayout:" "$1"
+    notify-send -a 'hyprland-per-window-xkblayout' -i globe "Hyprland-per-window-xkblayout script" "$1"
 }
+# }}}
 
 # OPTIONS
 prefer_first_layout="${HPWX_PREFER_FIRST:-false}"

@@ -35,9 +35,11 @@ windows = {
 
 ## Requirements
 
-* bash 4.0+ (for associative arrays).
-* socat (for listening for Hyprland socket2 events).
-* [gojq](https://github.com/itchyny/gojq) (for working with `hyprctl`'s json. `jq` could work, but it is much slower, so quit using it already).
+* Bash v4.0+ - for associative arrays.
+* socat - for listening for Hyprland socket2 events.
+* [gojq](https://github.com/itchyny/gojq) - for working with `hyprctl`'s json.
+
+Original [jq](https://github.com/jqlang/jq) after v1.7+ is also OK ([why not earlier](https://github.com/hyprwm/Hyprland/discussions/830#discussioncomment-9953659)). If you want to use it run `sed -i 's/gojq/jq/g'` on the script.
 
 Tested and works since Hyprland v0.19.0beta.
 

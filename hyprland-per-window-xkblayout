@@ -253,13 +253,16 @@ handle() {
     openwindow)
         local open_addr="0x${event_data%%,*}"
         if $prefer_first_layout; then
-            # FIXME: apparently `openwindow` can be after `activewindow`,
-            # in which case this will not change layout:
+            windows["$open_addr"]="${kb_layout_arr[0]}"
+            # NOTE: apparently `openwindow` can be after `activewindow`,
+            # in which case the above will not change layout:
             #   `activewindow` sees current layout as right, does nothing,
             #   `openwindow` redefines it to the first, ensures change when window is refocused, but not immediately
             #
             # example: libreoffice writer's save window
-            windows["$open_addr"]="${kb_layout_arr[0]}"
+            #
+            # Restoring manually to fix this:
+            restore_layout "$open_addr"
         else
             windows["$open_addr"]="$layout"
         fi

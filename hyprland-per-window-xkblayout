@@ -177,21 +177,26 @@ restore_layout() {
         fi
 
         from_script=true
-        # BUG: under extreme load hyprctl could take unexpectedly long time,
-        # during which you could still manage to switch windows, resulting in 2 or more calls chained
-        # to fire events at the same time.
+        # BUG: under extreme load handling an event could take unexpectedly long time,
+        # during which you could still manage to switch windows, resulting in 2 or
+        # more calls to switch layout chained to fire events at the same time.
         #
-        # Manifests as `from_script` being set to false by the first `activelayout` fired,
+        # Manifests as `from_script` being set to false by the first `activelayout` processed,
         # and the second (and those after) actually redefining layout for a given window.
         #
-        # repro:
-        #   `stress -c $(nproc)`, switch between 2 windows with different layouts fast
+        # Repro:
+        #   1. Run with HPWX_DEBUG=true, because delay from the write to stdout or at least
+        #      from `dump_windows()` seems important. CAN'T reproduce without HPWX_DEBUG=true at all.
         #
+        #   2. `stress -c $(nproc)`
         #
-        # Does `activewindow` avoid it? It opens with `hyprctl activewindow` call, thus stalling (?) all changes.
-        #   Tested: NO, but it seems to happen less frequently.
+        #   3. Swiftly switch between 2 windows with different layouts defined,
+        #      until layout stops matching expected
         #
-        # TODO: test everything with `sleep 1s`.
+        # `activewindow` case opens with `hyprctl activewindow` call, thus stalling changes, it helps, but not by much.
+        #
+        # Tested everything with `sleep 1s`. It sucks, but it's more accurate than regular hyprctl under stress test.
+        # The difference between `hyprctl switchxkblayout` under stress test and idle is just 10ms, so it's probably debug output issue.
         hyprctl switchxkblayout "$keyboard" "$index"
 
         layout="$short"
@@ -289,6 +294,7 @@ handle() {
         ;;
     esac
     if $DEBUG; then
+        # slow, increases the chances of `restore_layout()` bug dramatically
         dump_windows
     fi
 }

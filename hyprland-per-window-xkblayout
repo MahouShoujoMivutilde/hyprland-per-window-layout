@@ -86,25 +86,43 @@ if [[ -f "$config" ]]; then
     print_debug "loaded config from ${config}\n"
     source "$config"
 
-    kbd="$(hyprctl devices -j | gojq -r ".keyboards | .[] | select(.name == \"$keyboard\")")"
+    for i in 2s 4s 8s; do
+        kbd="$(hyprctl devices -j | gojq -r ".keyboards | .[] | select(.name == \"$keyboard\")")"
+        if [[ "$kbd" != "" ]]; then
+            break
+        fi
+        print_debug "No such device - '$keyboard'" | colorme $RED
+        print_debug "IPC might be slow to populate right after Hyprland's launch (v0.42+), waiting $i" | colorme $LRED
+        sleep "$i"
+    done
     if [[ "$kbd" == "" ]]; then
-        echons "No such device - '$keyboard'" | colorme $RED
+        echons "❗No such device - '$keyboard' found after 3 tries" | colorme $RED
         exit 1
     fi
+
 else
     print_debug "no config file, trying to guess options..."
 
     # Find keyboards that have multiple layouts defined,
     # pick the first one of them, because if you have
-    # multiple keyboards with different layouts - you're
+    # multiple keyboards with different layouts - you
     # obviously know what you're doing and don't need this script.
-    keyboard="$(hyprctl devices -j |
-        gojq -r ".keyboards | .[] | select(.layout | contains(\",\")) | .name" |
-        head -n 1)"
+    for i in 2s 4s 8s; do
+        keyboard="$(hyprctl devices -j |
+            gojq -r ".keyboards | .[] | select(.layout | contains(\",\")) | .name" |
+            head -n 1)"
+        if [[ "$keyboard" != "" ]]; then
+            break
+        fi
+        print_debug "No keyboard with multiple layouts defined found" | colorme $RED
+        print_debug "IPC might be slow to populate right after Hyprland's launch (v0.42+), waiting $i" | colorme $LRED
+        sleep "$i"
+    done
     if [[ "$keyboard" == "" ]]; then
-        echons "No keyboard with multiple layouts defined found" | colorme $RED
+        echons "❗No keyboard with multiple layouts defined found after 3 tries" | colorme $RED
         exit 1
     fi
+
 fi
 
 # FIXME: eww this looks horrible {{{

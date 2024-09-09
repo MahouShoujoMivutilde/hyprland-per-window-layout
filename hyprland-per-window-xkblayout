@@ -242,20 +242,27 @@ handle() {
     activelayout)
         local current="$(hyprctl activewindow -j | gojq -r '.address')"
 
-        local kbd_device="${event_data%,*}"
-        # atm accounts for keyboards with commas
-        # TODO: support long layout names with commas too
-        #       e.g. `Czech (QWERTY, Macintosh)`
-        #       ...which is problematic because we can have `activelayout>>some,keyboard,Some,(Layout,Name)`
-        # tracking: https://github.com/hyprwm/Hyprland/issues/6298#issuecomment-2143494999
-        local layout_fullname="${event_data##*,}"
+        # This monstrosity is here to handle cases like
+        #  `activelayout>>some-keyboard-(international,-lmao),Some,(Layout,Name)`
+        # tracking: https://github.com/hyprwm/Hyprland/issues/6298
+        case "$event_data" in
+            # only handle events from the keyboard we care about
+            "$keyboard"*)
+                local layout_fullname="${event_data##"$keyboard",}"
+                if ! [[ -v layouts_short["$layout_fullname"] ]]; then
+                    # layout can also be `error` or `none`
+                    # happens after using `wtype`
+                    print_debug "No such layout '$layout_fullname', window $current" | colorme $YELLOW
+                    return
+                fi
+                ;;
+            *)
+                print_debug "Ignoring '$event_data' because it doesn't match our keyboard = '${keyboard}', window $current" | colorme $YELLOW
+                return
+                ;;
+        esac
 
-        if ! [[ -v layouts_short["$layout_fullname"] ]] ||
-            [[ "$kbd_device" != "$keyboard" ]]; then
-            # layout can also be `error` or `none`
-            # happens after using `wtype`
-            return
-        fi
+        print_debug "Extracted layout as '$layout_fullname', window $current" | colorme $YELLOW
 
         layout="${layouts_short["$layout_fullname"]}"
 

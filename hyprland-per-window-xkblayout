@@ -242,6 +242,14 @@ handle() {
     activelayout)
         local current="$(hyprctl activewindow -j | gojq -r '.address')"
 
+        if [[ "$current" == null ]]; then
+            return
+        fi
+        if $from_script; then
+            from_script=false
+            return
+        fi
+
         # This monstrosity is here to handle cases like
         #  `activelayout>>some-keyboard-(international,-lmao),Some,(Layout,Name)`
         # tracking: https://github.com/hyprwm/Hyprland/issues/6298
@@ -265,14 +273,6 @@ handle() {
         print_debug "Extracted layout as '$layout_fullname', window $current" | colorme $YELLOW
 
         layout="${layouts_short["$layout_fullname"]}"
-
-        if [[ "$current" == null ]]; then
-            return
-        fi
-        if $from_script; then
-            from_script=false
-            return
-        fi
 
         windows["$current"]="$layout"
 

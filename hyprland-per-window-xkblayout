@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 #
+# https://github.com/MahouShoujoMivutilde/hyprland-per-window-layout
+#
 # Hyprland per window xkb layout
 #
 # How it works:

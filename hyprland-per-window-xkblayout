@@ -111,8 +111,7 @@ else
     # obviously know what you're doing and don't need this script.
     for i in 2s 4s 8s; do
         keyboard="$(hyprctl devices -j |
-            gojq -r ".keyboards | .[] | select(.layout | contains(\",\")) | .name" |
-            head -n 1)"
+            gojq -r ".keyboards | .[] | select((.main == true) and (.layout | contains(\",\"))) | .name")"
         if [[ "$keyboard" != "" ]]; then
             break
         fi
